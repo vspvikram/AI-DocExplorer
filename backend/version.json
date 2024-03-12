@@ -1,0 +1,21 @@
+
+[
+    {
+        "version": "0.1.0",
+        "current_version": false,
+        "name": "Quantum AI Research Assistant",
+        "description": "Initial release of the Quantum AI Research Assistant. This version introduces a simple web app that uses the GPT-3 API for generating responses based on user input. User queries are enriched with relevant documents fetched from the AWS S3 bucket, providing GPT-3 with ample context for response generation. Features include a dynamic chat history (limited to 10 QnA pairs to maintain coherence) and the ability for users to restart the conversation at any time."
+    },
+    {
+        "version": "0.2.0",
+        "current_version": false,
+        "name": "Quantum AI Research Assistant",
+        "description": "Enhanced version focusing on improved interaction and user authentication. The prompt engineering has been refined for more reliable text generation, avoiding model hallucinations. A new embedding approach has been implemented for better document retrieval using Pinecone Index search. Additionally, user authentication is introduced to personalize the experience, alongside improvements in how chat history is managed and stored locally for future reference."
+    },
+    {
+        "version": "0.3.0",
+        "current_version": true,
+        "name": "Quantum AI Research Assistant",
+        "description": "The latest iteration builds on previous releases with major enhancements in response accuracy and user experience. The chat history panel has been revamped for each user, allowing for easy review and continuation of past discussions. This version solidifies the app as a comprehensive tool for quantum research paper assistance, tailored to support users in exploring and understanding complex quantum research topics."
+    }
+]

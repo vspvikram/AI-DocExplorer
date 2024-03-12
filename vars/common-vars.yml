@@ -1,0 +1,17 @@
+ 
+asp_storage_account: ""
+key_vault_secret_key_names:
+  azure_search_api_key: "azure-search-api-key"
+  azure_search_storage_key: "azure-search-storage-key"
+  azure_openai_api_key: "azure-openai-api-key"
+  
+app_settings:  
+  azure_openai_service: ""
+  azure_search_index: ""
+  azure_search_service: ""
+  azure_search_endpoint: ""
+  azure_storage_account: ""
+  azure_storage_container: ""
+  azure_openai_gpt_deployment: ""
+  azure_openai_chatgpt_deployment: ""
+

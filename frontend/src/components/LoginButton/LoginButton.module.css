@@ -1,0 +1,30 @@
+.loginButton {
+    outline: transparent;
+    position: relative;
+    font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    font-weight: 400;
+    border: 1px solid rgb(0, 120, 212);
+    border-radius: 2px;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    padding: 0px 16px;
+    text-decoration: none;
+    text-align: center;
+    min-width: 80px;
+    height: 32px;
+    background-color: rgb(0, 120, 212);
+    color: rgb(255, 255, 255);
+    user-select: none;
+    width: fit-content;
+}
+
+
+.loginButton:hover {
+    background-color: rgb(16, 110, 190);
+    border: 1px solid rgb(16, 110, 190);
+    color: rgb(255, 255, 255);
+}
+

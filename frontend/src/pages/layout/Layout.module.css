@@ -1,0 +1,189 @@
+.layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+
+.header {
+    /* background-color: #222222; */
+    background-color: #0B2D71;
+    color: #f2f2f2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+
+.headerLeft,
+.headerRight {
+  /* flex-basis: 300px; Set the flex-basis to the width of the chat session panel */
+  flex-shrink: 0; /* Prevent these blocks from shrinking */
+  text-align: left;
+  display: inline-block;
+  padding-left: 30px;
+}
+
+
+.headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    margin-right: 12px;
+    margin-left: 12px;
+}
+/* .headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-right: 12px;
+    margin-left: 12px;
+} */
+/*Vik new*/
+.headerContent {
+    flex: 1;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    /* margin-left: 300px;  Width of the chat history panel */
+    /* flex: 1;  Takes up the remaining space */
+}
+
+
+.headerTitleContainer {
+    display: flex;
+    align-items: center;
+    margin-right: 40px;
+    color: #f2f2f2;
+    text-decoration: none;
+}
+
+
+.headerLogo {
+    height: 40px;
+}
+
+
+.headerTitle {
+    margin-left: 12px;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+
+.headerNavList {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    padding-left: 0;
+}
+
+
+.headerNavPageLink {
+    color: #f2f2f2;
+    text-decoration: none;
+    opacity: 0.75;
+
+
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    transition-duration: 500ms;
+    transition-property: opacity;
+}
+
+
+.headerNavPageLink:hover {
+    opacity: 1;
+}
+
+
+.headerNavPageLinkActive {
+    color: #f2f2f2;
+    text-decoration: none;
+}
+
+
+.headerNavLeftMargin {
+    margin-left: 20px;
+}
+
+
+.headerRightText {
+    font-weight: normal;
+    margin-left: 40px;
+}
+
+
+/*vik*/
+.headerRightTextContainer {
+    display: flex;
+    flex-direction: column;  /* This will stack the child elements vertically */
+    align-items: flex-end;  /* This will align the text to the left */
+    /* flex: 1;  New: This will take up the remaining space */
+}
+
+
+.microsoftLogo {
+    height: 23px;
+    font-weight: 600;
+}
+
+
+.githubLogo {
+    height: 20px;
+}
+.version {
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: block;
+    text-align: center;
+  }
+
+
+  .userGreeting {
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    padding: 5px 30px;
+    border-radius: 5px;
+    /* flex: 1; New: This will take up the remaining space */
+  }
+
+
+  .logoIcon {
+    width: 100px;  /* Adjust width as needed */
+    height: 100px;  /* Adjust height as needed */
+    background-image: url('../../assets/Quantum.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+.logoContainer {
+    position: relative;
+    left: 25%;  /* Adjusting the position based on the width of the chat history panel */
+    width: 75%;  /* Remaining width after chat history panel */
+    display: flex;
+    justify-content: center;  /* This will center the logo icon horizontally */
+}
+
+
+.nav {
+    position: absolute;
+    left: 50%;
+    transform: translateX(calc(-50% + 150px));
+}
+
+
+
+
+
+
