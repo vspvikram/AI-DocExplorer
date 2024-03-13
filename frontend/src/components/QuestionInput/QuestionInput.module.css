@@ -4,13 +4,14 @@
     height: 90px;
     width: 100%;
     padding: 15px;
-    background: white;
+    background: #F8F8FF;
 }
 
 
 .questionInputTextArea {
     width: 100%;
     line-height: 40px;
+    background: #F8F8FF;
 }
 
 

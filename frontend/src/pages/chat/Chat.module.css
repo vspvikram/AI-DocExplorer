@@ -14,7 +14,7 @@
     overflow-y: auto; /* Allows scrolling if content overflows vertically */
     height: 100%; /* Takes the full height of its parent container */
     border-right: 1px solid #ddd; /* Optional: Adds a border between the left and right containers */
-    background-color: gainsboro;
+    background-color: #dcdcdc;
     border-top-right-radius: 8px;  /* Adjust the value to control the rounding */
     border-bottom-right-radius: 8px;
 }
@@ -26,6 +26,7 @@
     flex-direction: column;
     overflow: hidden; /* Hides overflow, preventing a scrollbar on the right container */
     height: 100%; /* Takes the full height of its parent container */
+    background: #F0F8FF;
 }
 /*Vik: End*/
 
@@ -71,6 +72,7 @@
     font-weight: 600;
     margin-top: 0;
     margin-bottom: 30px;
+    text-align: center;
 }
 
 
@@ -82,7 +84,7 @@
 
 .chatEmptyStateDisclaimer {
     /* color: #6666CC; */
-    color: #0066B2;
+    color: #A9A9A9;
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 20px;
@@ -123,6 +125,7 @@
     max-width: 80%;
     display: flex;
     min-width: 500px;
+    color: #36454F;
 }
 
 
@@ -142,7 +145,7 @@
     padding-right: 24px;
     width: 100%;
     max-width: 1028px;
-    background: #f2f2f2;
+    background: inherit;
 }
 
 
@@ -193,7 +196,7 @@
 
 
 .feedbackLink {
-    color: #009DD9; /* replace 'yourColor' with the color you want */
+    color: #88A09E; /* replace 'yourColor' with the color you want */
     text-decoration: none; /* this will remove the underline */
     display: block; /* this will make the link block-level */
     text-align: center; /* this will center the text */
