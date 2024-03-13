@@ -59,7 +59,7 @@ Each source has a name followed by colon and the actual information and the sour
     Generate a search query based on the conversation and the new question. 
     Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
     Do not include any text inside [] or <<>> in the search query terms.
-    Only generate the updated search query that can directly be used without any additional words or characters like "Search query:".
+    Do not include any additional words or special characters like "search query", only generate the optimized search query that can directly be used.
     If the question is not in English, translate the question to English before generating the search query.
     """
 # Chat History:
@@ -316,12 +316,11 @@ Chat Session Name:
             # chat_session_name = chat_session_name_completion.choices[0].text
             # chat_session_name = chat_session_name.replace("\"", "")
 
-            messages = {'role': 'user', 'content': chat_session_name_prompt}
+            messages = [{'role': 'user', 'content': chat_session_name_prompt}]
             chat_session_name = self.llm_client.create(messages=messages)
             chat_session_name = chat_session_name.replace("\"", "")
         else:
             chat_session_name = ""
-        chat_session_name = ""
  
         return {"data_points": results, "answer": completion,
                 "thoughts": f"Searched for:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>'),
@@ -331,9 +330,13 @@ Chat Session Name:
     def get_chat_history_as_text(self, history, include_last_turn=True, approx_max_tokens=1000) -> str:
         history_text = ""
         for h in reversed(history if include_last_turn else history[:-1]):
-            history_text = """<|im_start|>user""" +"\n" + h["user"] + "\n" + """<|im_end|>""" + "\n" + """<|im_start|>assistant""" + "\n" + (h.get("bot") + """<|im_end|>""" if h.get("bot") else "") + "\n" + history_text
+            history_text = """user:""" +"\n" + h["user"] + "\n" + "\n" + """assistant:""" + "\n" + (h.get("bot") if h.get("bot") else "") + "\n" + history_text
             if len(history_text) > approx_max_tokens*4:
                 break    
+        # for h in reversed(history if include_last_turn else history[:-1]):
+        #     history_text = """<|im_start|>user""" +"\n" + h["user"] + "\n" + """<|im_end|>""" + "\n" + """<|im_start|>assistant""" + "\n" + (h.get("bot") + """<|im_end|>""" if h.get("bot") else "") + "\n" + history_text
+        #     if len(history_text) > approx_max_tokens*4:
+        #         break    
         return history_text
     
     def get_chat_history_for_ChatCompletion(self, history, existing_list=None):

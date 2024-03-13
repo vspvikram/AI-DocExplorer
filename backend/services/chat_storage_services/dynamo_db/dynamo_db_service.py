@@ -1,4 +1,5 @@
 import boto3
+import json
 from botocore.exceptions import ClientError
 from services.chat_storage_services import ChatStorageService
 
@@ -46,6 +47,20 @@ class DynamoDBChatStorageService(ChatStorageService):
                 Statement=query
             )
             items = [dict(zip(item.keys(), [list(val.values())[0] for val in item.values()])) for item in response['Items']]
+
+            for item in items:
+                if 'chatData' in item and isinstance(item['chatData'], str):
+                    try:
+                        item['chatData'] = json.loads(item['chatData'])
+                    except json.JSONDecodeError as e:
+                        print(f"Error decoding chatData for item {item['id']}: {e}")
+                
+                if 'regeneration_data' in item and isinstance(item['regeneration_data'], str):
+                    try:
+                        item['regeneration_data'] = json.loads(item['regeneration_data'])
+                    except json.JSONDecodeError as e:
+                        print(f"Error decoding regeneration_data for item {item['id']}: {e}")
+
             return items
         except ClientError as e:
             print(e.response['Error']['Message'])

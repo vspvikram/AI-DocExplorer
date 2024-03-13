@@ -1,5 +1,5 @@
 import requests
-API_TOKEN="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"
+API_TOKEN=""
 # API_URL = "https://api-inference.huggingface.co/models/meta-llama/Llama-2-7b-chat-hf"
 # headers = {"Authorization": f"Bearer {API_TOKEN}"}
 

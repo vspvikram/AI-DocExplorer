@@ -57,7 +57,7 @@ docs = "\n\n".join(results)
 history = [{'user': "What are some of the major achievements in Mars exploration?"}]
 
 config = {"api_url": "https://api-inference.huggingface.co/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0",
-          "api_key": "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"}
+          "api_key": ""}
 
 llma_model = HuggingfaceTinyLlama(config=config)
 prepared_prompt = llma_model.format_prompt(system_prompt=system_prompt,

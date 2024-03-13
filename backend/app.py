@@ -153,6 +153,7 @@ def create_chat_session_document(history, generated_answer, existing_session=Non
             "bot": generated_answer['answer']
         })
         chat_session["regeneration_data"] = {"history": history}
+        chat_session["lastUpdateTime"] = time.time()
     else:
         full_history = history
         full_history[-1]['bot'] = generated_answer['answer']
@@ -164,7 +165,8 @@ def create_chat_session_document(history, generated_answer, existing_session=Non
             "firstName": session.get('first_name'),
             "lastName": session.get('last_name'),
             "sessionStartTime": session.get('session_timestamp'),
-            "chatSessionName": f"New session {history[-1]['user'][:10]}",
+            "lastUpdateTime": time.time(),
+            "chatSessionName": f"{history[-1]['user'][:20]}",
             "chatData": full_history,
             "regeneration_data": {
                 "history": history,
@@ -173,18 +175,36 @@ def create_chat_session_document(history, generated_answer, existing_session=Non
     if generated_answer['Chat_Session_Name'] != "":
         chat_session['chatSessionName'] = generated_answer['Chat_Session_Name']
     chat_session['chatData'][-1]['Supporting_docs'] = [generated_answer['data_points'][i].split(':')[0] for i in range(len(generated_answer['data_points']))]
+    chat_session['chatData'] = json.dumps(chat_session['chatData'])
+    chat_session['regeneration_data'] = json.dumps(chat_session['regeneration_data'])
     return chat_session
 
-# # Vik: function to push the chat session document to Cosmos DB
-# def push_chat_session_document(request, r):
-#     try:
-#         chat_session = cosmos_container.read_item(item=session.get('session_id'), partition_key=session.get('email'))
-#         chat_session = create_chat_session_document(request.json["history"], generated_answer=r,
-#                                                     existing_session=True, chat_session=chat_session)
-#     except exceptions.CosmosResourceNotFoundError:
-#         # If the session document doesn't exist, create a new one
-#         chat_session = create_chat_session_document(request.json["history"], generated_answer=r)
-#     cosmos_container.upsert_item(chat_session)
+# Vik: function to push the chat session document to Cosmos DB
+def push_chat_session_document(request, r):
+    session_id = session.get('session_id')
+    user_email = session.get('email')
+
+    # Attempt to read the existing chat session document
+    chat_session = CHAT_STORAGE_CLIENT.read_item(session_id=session_id, user_id=user_email)
+    if chat_session:
+        # If the session document exists, update it
+        chat_session = create_chat_session_document(request.json["history"], generated_answer=r, 
+                                                    existing_session=True, chat_session=chat_session)
+    else:
+        # If the session document doesn't exist, create a new one
+        chat_session = create_chat_session_document(request.json["history"], generated_answer=r)
+    
+    # Upsert the (new or updated) chat session document to DynamoDB
+    CHAT_STORAGE_CLIENT.upsert_item(chat_session=chat_session)
+    
+    # try:
+    #     chat_session = cosmos_container.read_item(item=session.get('session_id'), partition_key=session.get('email'))
+    #     chat_session = create_chat_session_document(request.json["history"], generated_answer=r,
+    #                                                 existing_session=True, chat_session=chat_session)
+    # except exceptions.CosmosResourceNotFoundError:
+    #     # If the session document doesn't exist, create a new one
+    #     chat_session = create_chat_session_document(request.json["history"], generated_answer=r)
+    # cosmos_container.upsert_item(chat_session)
  
 # Vik: User login protocols for Azure AD authentication
 # #vik: login route
@@ -320,7 +340,7 @@ def content_file(path):
 def version():
     try:
         # if testing in debug mode then change the file path to "./backend/version.json" and for deployment "./version.json"
-        with open("./version.json", "r") as f:
+        with open("./backend/version.json", "r") as f:
             data = json.load(f)
             for obj in data:
                 if obj["current_version"]:
@@ -397,8 +417,8 @@ def chat():
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
         r = impl.run(request.json["history"], request.json.get("overrides") or {})
-        # Vik: save chat session to Cosmos DB
-        # push_chat_session_document(request, r)
+        # Vik: save chat session to Chat session storage service
+        push_chat_session_document(request, r)
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")
@@ -416,18 +436,19 @@ def chat_session(session_id):
         return jsonify({"error": "Invalid session id"}), 400
     
 def fetch_all_chat_history(user_email):
-    # try:
-    #     query={
-    #         "query": f'SELECT c.id, c.chatSessionName, c._ts  FROM ChatSessions c WHERE c.userId = @userEmail ORDER BY c._ts DESC',
-    #         "parameters": [
-    #             {"name": "@userEmail", "value": user_email} 
-    #         ]
-    #     }
-    #     items = list(cosmos_container.query_items(query=query, enable_cross_partition_query=True))
-    #     return items
-    # except exceptions.CosmosResourceNotFoundError:
-    #     return "Error"
-    return "Error"
+    try:
+        query = f"SELECT * FROM \"{CHAT_STORAGE_TABLE_NAME}\" WHERE \"userId\" = '{user_email}'"
+        # query={
+        #     "query": f'SELECT c.id, c.chatSessionName, c._ts  FROM ChatSessions c WHERE c.userId = @userEmail ORDER BY c._ts DESC',
+        #     "parameters": [
+        #         {"name": "@userEmail", "value": user_email} 
+        #     ]
+        # }
+        items = CHAT_STORAGE_CLIENT.query_items(query=query)
+        # items = list(cosmos_container.query_items(query=query, enable_cross_partition_query=True))
+        return items
+    except:
+        return "Error: Error in fetching the chat sessions for the user"
 
 @app.route('/check_login', methods=['GET'])
 def check_login():
@@ -436,8 +457,8 @@ def check_login():
             userData = {"firstName": session['first_name'], 
                         "lastName": session['last_name'], 
                         "email": session['email'], "session_id": session['session_id']}
-            # chatSessions = fetch_all_chat_history(session['email'])  # Assume get_user_data is a function to fetch user data.
-            chatSessions = []
+            chatSessions = fetch_all_chat_history(session['email'])  # Assume get_user_data is a function to fetch user data.
+            # chatSessions = []
             
             user_data = {"userData": userData, "chatSessions": chatSessions, "isLoggedIn": True}
             return jsonify(user_data)

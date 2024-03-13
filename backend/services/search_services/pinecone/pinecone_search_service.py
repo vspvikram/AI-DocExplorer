@@ -1,6 +1,7 @@
 # pinecone_search_service.py
 from services.search_services import SearchServiceClass
 import pinecone
+import numpy as np
 
 class PineconeSearchService(SearchServiceClass):
     """Pinecone implementation of the SearchServiceClass."""
@@ -19,8 +20,24 @@ class PineconeSearchService(SearchServiceClass):
 
     def query_index(self, vector, top_k=5):
         """Query the Pinecone index."""
-        results = self.index.query(queries=[vector], top_k=top_k)
-        return results['results'][0]['matches']
+        if isinstance(vector, np.ndarray):
+            vector = vector.tolist()
+        results = self.index.query(vector=vector, top_k=top_k,  include_metadata=True)
+        results = results['matches']
+
+        formatted_results = []
+
+        for item in results:
+            # Extract the required information from each item
+            formatted_item = {
+                "id": item.get('id'),
+                "content": item['metadata'].get('content') if item.get('metadata') else None,
+                "sourcefile": item['metadata'].get('sourcefile') if item.get('metadata') else None,
+                "sourcepage": item['metadata'].get('sourcepage') if item.get('metadata') else None,
+                "score": item.get('score')
+            }
+            formatted_results.append(formatted_item)
+        return formatted_results
     
 
 

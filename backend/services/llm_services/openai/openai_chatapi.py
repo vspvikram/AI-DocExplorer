@@ -99,7 +99,7 @@ class OpenAIChatService(LlmServiceClass):
 #     docs = "\n\n".join(results)
 #     history = [{'user': "What are some of the major achievements in Mars exploration?"}]
 
-#     config = {"llm_api_key": "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"}
+#     config = {"llm_api_key": ""}
 
 #     openai_model = OpenAIChatService(config=config)
 #     messages = openai_model.format_prompt(system_prompt=system_prompt,
