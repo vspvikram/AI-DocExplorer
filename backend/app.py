@@ -361,6 +361,7 @@ def version():
 #         return items
 #     except exceptions.CosmosResourceNotFoundError:
 #         return jsonify({"error": "No chat history found"}), 400
+    
 # Vik: Fetch the chat history for the current user from Cosmos DB
 # @app.route("/getChatHistory", methods=["GET"])
 # @require_login
@@ -427,12 +428,12 @@ def chat():
 @app.route("/chatSession/<session_id>", methods=["GET"])
 # @require_login
 def chat_session(session_id):
-    # check if the session id is valid
+    # check if the session id is valid session_id, user_id
     try:
-        # chat_session = cosmos_container.read_item(item=session_id, partition_key=session['email'])
+        chat_session = CHAT_STORAGE_CLIENT.read_item(session_id=session_id, user_id=session['email'])
         session['session_id'] = session_id
         return jsonify(chat_session)
-    except exceptions.CosmosResourceNotFoundError:
+    except:
         return jsonify({"error": "Invalid session id"}), 400
     
 def fetch_all_chat_history(user_email):
