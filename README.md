@@ -45,15 +45,14 @@ The architecture of AI-DocExplorer (illustrated in QASA's context) is built on s
 To adapt AI-DocExplorer for your application, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/your-username/AI-DocExplorer.git`
-2. Replace the documents in the AWS S3 bucket with your own.
-3. Update the vector indices in Pinecone to match your document chunks.
-4. Customize the AI prompts in the OpenAI GPT-4 model to fit your domain.
-5. Set up AWS DynamoDB according to your session management needs.
-6. Copy the documents into the "data/" folder.
-7. Change the directory to 'DataPreprocessing/' folder in your terminal.
-8. Run the file "prepare_documents.py" with additional input variables as shown below:
+2. Creat an AWS s3 bucket to store the documents and a Pinecone index.
+3. Customize the AI prompts in the `approaches/chatreadretrieveread.py` to fit your domain.
+4. Set up AWS DynamoDB table according to your session management needs.
+5. Copy the documents into the `data/` folder.
+6. Change the directory to `DataPreprocessing/` folder in your terminal.
+7. Run the file `prepare_documents.py` with additional input variables as shown below. It will create chunks from the documents and store them in your pinecone index. 
 
-```
+```bash
 python prepare_documents.py "data/*" --pineconekey "<your pinecone service api key>" --index "<index name on search service>" --s3accesskey "<your s3 access key>" --s3secretkey "<your s3 secret access key>" --bucketname "<your bucket name on s3>" -v
 ```
 
@@ -130,7 +129,7 @@ CHAT_STORAGE_REGION_NAME="<Chat storage service region name>"
 FLASK_SECRET_KEY="<Define you secret flask key>"
 ```
 
-Make sure to update the path to this .env file in `backend/app.py` with your environment name in the `load_dotenv()` function call.
+Make sure to update the path to this `.env` file in `backend/app.py` with your environment name in the `load_dotenv()` function call.
 
 #### Run Locally
 Activate the virtual environment and start the app.
@@ -171,5 +170,8 @@ Follow the deployment guidelines specific to Azure Web App or Amazon Elastic Bea
 ## License
 This project is open-sourced under the [Apache-2.0 license](https://github.com/vspvikram/Plug-and-Play-RAG/tree/main?tab=Apache-2.0-1-ov-file#readme)
 
+## Acknowledgements
+
+AI-DocExplorer is based on a foundational template provided by [Azure](https://github.com/Azure-Samples/azure-search-openai-demo/tree/vectors). We have adapted and expanded upon this template to develop a versatile framework that caters to a wide range of document exploration needs. Special thanks to the Azure team for providing the building blocks that have facilitated the development of AI-DocExplorer.
 
 
