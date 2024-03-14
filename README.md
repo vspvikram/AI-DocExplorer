@@ -44,7 +44,7 @@ The architecture of AI-DocExplorer (illustrated in QASA's context) is built on s
 
 To adapt AI-DocExplorer for your application, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/your-username/AI-DocExplorer.git`
+1. Clone the repository: `git clone https://github.com/vspvikram/AI-DocExplorer.git`
 2. Creat an AWS s3 bucket to store the documents and a Pinecone index.
 3. Customize the AI prompts in the `approaches/chatreadretrieveread.py` to fit your domain.
 4. Set up AWS DynamoDB table according to your session management needs.
