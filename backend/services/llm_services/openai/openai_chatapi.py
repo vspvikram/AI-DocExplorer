@@ -11,6 +11,7 @@ class OpenAIChatService(LlmServiceClass):
     def __init__(self, config):
         super().__init__(config, name="OpenAIChatService")
         self.client = OpenAI()
+        self.model_name = config['llm_model_name']
         if "llm_api_key" not in config:
             raise "Invalid config: Does not have the api key"
 
@@ -25,11 +26,12 @@ class OpenAIChatService(LlmServiceClass):
                 "frequency_penalty": 0,
                 "presence_penalty": 0
         """
+        model_name = model if model else self.model_name
         try:
             openai.api_key = self.config['llm_api_key']
             # Default parameters for the chat completion
             params = {
-                "model": model or "gpt-3.5-turbo",
+                "model": model_name or "gpt-3.5-turbo",
                 "messages": messages,
                 "temperature": 1,
                 "max_tokens": 256,

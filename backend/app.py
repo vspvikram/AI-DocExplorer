@@ -46,6 +46,7 @@ KB_FIELDS_SOURCEPAGE = os.environ.get("KB_FIELDS_SOURCEPAGE") or "sourcepage"
 
 # Prepare config file
 LLM_SERVICE_NAME = os.getenv('LLM_SERVICE_NAME')
+LLM_MODEL_NAME = os.getenv('LLM_MODEL_NAME')
 LLM_API_KEY = os.getenv('LLM_API_KEY')
 
 LLM_EMBED_SERVICE_NAME=os.getenv('LLM_EMBED_SERVICE_NAME')
@@ -54,6 +55,7 @@ LLM_EMBED_MODEL_NAME=os.getenv('LLM_EMBED_MODEL_NAME')
 SEARCH_SERVICE_NAME = os.getenv('SEARCH_SERVICE_NAME')
 SEARCH_API_KEY = os.getenv('SEARCH_API_KEY')
 SEARCH_INDEX_NAME=os.getenv('SEARCH_INDEX_NAME')
+SEARCH_NAMESPACE = os.getenv('SEARCH_NAMESPACE')
 KB_FIELDS_SOURCEPAGE=os.getenv('KB_FIELDS_SOURCEPAGE')
 KB_FIELDS_CONTENT=os.getenv('KB_FIELDS_CONTENT')
 
@@ -69,10 +71,10 @@ CHAT_STORAGE_TABLE_NAME = os.getenv('CHAT_STORAGE_TABLE_NAME')
 CHAT_STORAGE_REGION_NAME = os.getenv('CHAT_STORAGE_REGION_NAME')
 
 config = {
-    "llm_service_name": LLM_SERVICE_NAME, "llm_api_key": LLM_API_KEY,
+    "llm_service_name": LLM_SERVICE_NAME, "llm_api_key": LLM_API_KEY, 'llm_model_name': LLM_MODEL_NAME,
     'llm_embed_service_name': LLM_EMBED_SERVICE_NAME, 'llm_embed_model_name': LLM_EMBED_MODEL_NAME,
     "search_service_name": SEARCH_SERVICE_NAME, "search_api_key": SEARCH_API_KEY,
-    "search_index_name": SEARCH_INDEX_NAME,
+    "search_index_name": SEARCH_INDEX_NAME, 'search_namespace': SEARCH_NAMESPACE,
     'doc_storage_service_name': DOC_STORAGE_SERVICE_NAME,
     'doc_storage_access_key_id': DOC_STORAGE_ACCESS_KEY_ID, 
     'doc_storage_secret_access_key': DOC_STORAGE_SECRET_ACCESS_KEY,
@@ -318,11 +320,11 @@ def static_file(path):
 # @require_login
 def content_file(path):
     # blob = blob_container.get_blob_client(path).download_blob()
-    blob = DOC_STORAGE_CLIENT.download_document(path)
-    mime_type = blob.properties["content_settings"]["content_type"]
-    if mime_type == "application/octet-stream":
-        mime_type = mimetypes.guess_type(path)[0] or "application/octet-stream"
-    return_blob = blob.readall() #vik
+    return_blob = DOC_STORAGE_CLIENT.download_document(path)
+    # mime_type = blob.properties["content_settings"]["content_type"]
+    # if mime_type == "application/octet-stream":
+    mime_type = mimetypes.guess_type(path)[0] or "application/octet-stream"
+    # return_blob = blob.readall() #vik
     # return_blob = return_blob.decode('latin-1', 'ignore') #vik
     # return_blob = return_blob.replace('\u2013', '?') #vik
     # return_blob = return_blob.encode('latin-1', 'ignore') #vik

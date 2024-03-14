@@ -115,12 +115,12 @@ def index_sections(index, filename, sections):
         i += 1
         if i % 1000 == 0:
             # results = search_client.index_documents(vectors=vectors)
-            results = index.upsert(vectors=vectors)
+            results = index.upsert(vectors=vectors, namespace='aichatbot')
             if 'upserted_count' in results:
                 if args.verbose: print(f"\tIndexed {results['upserted_count']} sections, {results['upserted_count']} succeeded")
 
     if len(vectors) > 0:
-        results = index.upsert(vectors=vectors)
+        results = index.upsert(vectors=vectors, namespace='aichatbot')
         if 'upserted_count' in results:
             if args.verbose: print(f"\tIndexed {results['upserted_count']} sections, {results['upserted_count']} succeeded")
         

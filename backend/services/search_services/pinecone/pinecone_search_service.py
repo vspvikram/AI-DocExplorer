@@ -13,16 +13,18 @@ class PineconeSearchService(SearchServiceClass):
         pc = pinecone.Pinecone(api_key=config['search_api_key'])
         self.index_name = config['search_index_name']
         self.index = pc.Index(self.index_name)
+        self.namespace = config['search_namespace']
 
-    def index_document(self, document_id, vector, metadata=None):
+    def index_document(self, document_id, vector, metadata=None, namespace=None):
         """Index a document in Pinecone."""
-        self.index.upsert(vectors=[(document_id, vector, metadata)])
+        self.index.upsert(vectors=[(document_id, vector, metadata)], namespace=namespace if namespace else self.namespace)
 
-    def query_index(self, vector, top_k=5):
+    def query_index(self, vector, top_k=5, namespace=None):
         """Query the Pinecone index."""
         if isinstance(vector, np.ndarray):
             vector = vector.tolist()
-        results = self.index.query(vector=vector, top_k=top_k,  include_metadata=True)
+        results = self.index.query(vector=vector, top_k=top_k,  include_metadata=True,
+                                   namespace=namespace if namespace else self.namespace)
         results = results['matches']
 
         formatted_results = []

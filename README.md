@@ -1,58 +1,92 @@
-# Plug-and-Play-RAG
+# AI-DocExplorer: AI-Enhanced Plug-and-Play RAG Document Explorer
 
-# Quantum AI Search Assistant: QASA
-------------------
-
-
-This is the main codebase for the QASA project. It is a web application that allows users to interact with a chatbot to get information about their own files stored in database. 
+AI-DocExplorer is a flexible AI-powered chatbot framework designed to streamline the search, discovery and iteraction process within extensive document databases. By harnessing cutting-edge AI technologies, it offers a dynamic chat interface enabling users to delve into any subject matter with ease. The framework is uniquely crafted to understand queries contextually, drawing on a diverse range of insights gleaned from a comprehensive document corpus. We have demonstrated its adaptability using an example implementation on Quantum physics research document corpus.
 
 
-The chatbot is powered by these services running on the azure cloud:
-- Pinecone Index Search Service
-- AWS S3 Storage Service
-- Azure OpenAI Service:
-    - GPT-3.5 Turbo API for the generative model 
-- AWS DynamoDB Storage Service
-    - To store the chat history of the users
+## Customizable and Service-Agnostic Architecture
+
+Designed with flexibility at its core, AI-DocExplorer can be easily tailored for various domains beyond quantum physics. It is engineered to be service-agnostic, allowing seamless integration with alternative or additional services for document storage, search, or AI model processing. Users can extend or replace the default services by simply adding new service adapters in the `backend/services` directory, adapting the framework to meet specific project requirements or to tap into other powerful AI functionalities and data sources.
+
+## Example Implementation: Quantum AI Search Assistant (QASA)
+
+As a demonstration of its adaptability, AI-DocExplorer is exemplified through the Quantum AI Search Assistant (QASA). This specialized implementation is adeptly configured for navigating the intricate landscape of quantum physics research. QASA exemplifies the framework's potential, empowering users to streamline their queries, retrieve pertinent sections from scholarly articles, and synthesize information into well-informed, nuanced responses.
 
 
-The web application is built using the flask framework for backend and React for frontend and is hosted on an Azure App Service.
+![QASA Chat Interface](images/QASA_1.png)
+*QASA in action: An interactive chat session with the AI providing insights on quantum physics.*
 
+![QASA Chat Interface](images/QASA_2.png)
+*QASA in action: Accessing the citation documents stored on `AWS S3` right in the app view.*
+
+## Architecture Overview
+
+The architecture of AI-DocExplorer (illustrated in QASA's context) is built on several scalable and powerful cloud services, ensuring a seamless and dynamic user experience.
+
+![Architecture Diagram](images/QASA_architecture.png)
+*Behind-the-scenes of AI-DocExplorer: A diagram showing the interplay of services.*
+
+### Services and Workflow:
+
+1. **Storage Service (AWS S3)**: Hosts a bucket where documents are securely stored.
+2. **Search Service (Pinecone)**: Maintains a vector index for each document chunk, allowing for efficient retrieval.
+3. **LLM Service (OpenAI GPT-4)**: Enhances user queries, generates responses, and crafts session names.
+4. **LLM Embedding Model (Sentence-Transformers)**: Transforms queries into vector embeddings, aiding in the search process.
+5. **Chat Storage Service (AWS DynamoDB)**: Archives current and historical chat sessions for user reference.
+
+## Features
+
+- **Interactive Chat**: Engage with the AI in a natural conversation flow.
+- **Document-Driven Insights**: Receive answers that cite sections from the loaded documents.
+- **Dynamic Search**: The AI dynamically fetches relevant document sections based on your query.
+- **Session Continuity**: Return to past conversations or start new ones, all stored in a scalable database.
+
+# Getting Started
+
+To adapt AI-DocExplorer for your application, follow these steps:
+
+1. Clone the repository: `git clone https://github.com/your-username/AI-DocExplorer.git`
+2. Replace the documents in the AWS S3 bucket with your own.
+3. Update the vector indices in Pinecone to match your document chunks.
+4. Customize the AI prompts in the OpenAI GPT-4 model to fit your domain.
+5. Set up AWS DynamoDB according to your session management needs.
+6. Copy the documents into the "data/" folder.
+7. Change the directory to 'DataPreprocessing/' folder in your terminal.
+8. Run the file "prepare_documents.py" with additional input variables as shown below:
+
+```
+python prepare_documents.py "data/*" --pineconekey "<your pinecone service api key>" --index "<index name on search service>" --s3accesskey "<your s3 access key>" --s3secretkey "<your s3 secret access key>" --bucketname "<your bucket name on s3>" -v
+```
+
+
+Detailed setup and installation instructions can be found in the documentation below.
 
 ## Installation
-To use this codebase, you will need to follow the steps mentioned below. 
 
+This section provides detailed steps to set up and run AI-DocExplorer locally, and guidelines for deploying it to a web service like Azure Web App or Amazon Elastic Beanstalk.
 
-Any issues or bugs can be reported to the issues tab of this repository or by contacting the developers: (Vikram Singh).
+### Local Setup
 
+#### Backend Dependencies
 
-# To run the app locally
-
-
-## Install the dependencies for the backend
-```
+```bash
 # creating python virtual environment for the backend
 python -m venv backend/backend_env
-```
 
-
-```
-cd backend
 # For windows
+cd backend
 ./backend_env/Scripts/python.exe -m pip install -r requirements.txt
 
 # For Mac OS
+cd backend
 source ./backend_env/bin/activate
 pip install -r requirements.txt
 ```
 
-
-
-## Install the dependencies for the frontend
-```
+#### Frontend Dependencies
+```bash
 cd frontend
-#if the packages are not installed then run the command below
-npm install  
+# if the packages are not installed then run the command below
+npm install
 ```
 ```
 npm run build
@@ -60,9 +94,12 @@ cd ..\backend
 ```
 
 
-## Setup the environment variables
-Make sure you have created an os environment variables file for your app by creating folders `.azure/<your env name>`. Add a new file named `.env` and add the following content to it:
-```
+#### Environment Variables Setup
+
+Ensure you have the necessary environment variables set up by creating a `.env` file in `.environments/<your-env-name>` and updating the content with your service credentials.
+
+```plaintext
+# Update with your API keys and service details
 # Openai API key
 LLM_SERVICE_NAME="<your LLM service Name or openai>"
 LLM_API_KEY="<Your LLM service api key>"
@@ -92,91 +129,47 @@ CHAT_STORAGE_REGION_NAME="<Chat storage service region name>"
 
 FLASK_SECRET_KEY="<Define you secret flask key>"
 ```
-After creating the file, you should update the path to this file in `backend/app.py` in the `load_dotenv` function call with the name of your `<env name>`
 
+Make sure to update the path to this .env file in `backend/app.py` with your environment name in the `load_dotenv()` function call.
 
-## To run locally
+#### Run Locally
+Activate the virtual environment and start the app.
+```bash
+# For Windows
+./backend_env/Scripts/python.exe ./app.py
+
+# For Mac OS/Linux
+source backend_env/bin/activate
+python app.py
 ```
-./backend_env/Scripts/python.exe ./app.py 
-```
---------------------------------
---------------------------------
 
-
-# To deploy to azure web app
-
-
-## Install the dependencies for the frontend and build the frontend
---------------------------------
-```
+### Deploy to cloud using Azure Web App or Amazon Elastic Beanstalk
+#### Build the Frontend
+```bash
 cd frontend
-#if the packages are not installed then run the command below
-npm install  
-```
-```
+npm install
 npm run build
-cd ..\backend 
+cd ../backend
 ```
 
-
-## Environment variables setup in the azure web app
---------------------------------
-In the azure portal, go to the `Web-App -> Configuration (under settings)` and set the following environment variables by clicking on the `New application setting` button
-```
-AZURE_ENV_NAME="<your env name>"
-AZURE_OPENAI_RESOURCE_GROUP="<resource group name>"
-AZURE_OPENAI_SERVICE="<openai service name>"
-AZURE_STORAGE_ACCOUNT="<storage account name>"
-AZURE_STORAGE_CONTAINER="<storage container name>"
-AZURE_SEARCH_SERVICE="<search service name>"
-AZURE_SEARCH_INDEX="<search index name>"
-AZURE_SEARCH_API_KEY="<search api key>"
-AZURE_SEARCH_STORAGE_KEY="<search storage key>"
-AZURE_OPENAI_GPT_DEPLOYMENT="<openai gpt deployment name>"
-AZURE_OPENAI_CHATGPT_DEPLOYMENT="<openai chat gpt deployment name>"
-OPENAI_API_KEY="<openai api key of user>"
-SCM_DO_BUILD_DURING_DEPLOYMENT="true"
-```
-This part can also be done using the azure cli. Please refer to the following link for more details: https://docs.microsoft.com/en-us/azure/app-service/configure-common#configure-app-settings
-
-
-
-## Create a ZIP file of your application with the following files and folders in backend folder
---------------------------------
-```
-- approaches
-- static
+#### Deploy Backend
+Include the following files and folders from the backend directory when deploying to your web app:
+```plaintext
+- approaches/
+- services/
+- static/
 - app.py
-- langchainadapters.py
+- langchainadapter.py
 - lookuptool.py
 - requirements.txt
 - text.py
 - version.json
 ```
 
+Follow the deployment guidelines specific to Azure Web App or Amazon Elastic Beanstalk for setting up environment variables and deploying your application.
 
-## ENV variables setup
---------------------------------
-In the powershell terminal, run the following commands to set the environment variables
-```
-$resourceGroupName='finsit-t113-20230330' or <your resource group name>
-$appServiceName='GCAChatbot' or <your app name>
-$env:SCM_DO_BUILD_DURING_DEPLOYMENT='true'          
-```
-
-
-## To deploy the app to Azure
-```
-az webapp deploy --name $appServiceName --resource-group $resourceGroupName --src-path app.zip
-```
-
-
-## For troubleshooting: setting subscription to the account
-```
-az account set --subscription fce04e5c-fd9f-462a-abb8-9e83ac353dba
-# confirm if the subscription is set to the correct account
-az account show
-```
+## License
+This project is open-sourced under the [Apache-2.0 license](https://github.com/vspvikram/Plug-and-Play-RAG/tree/main?tab=Apache-2.0-1-ov-file#readme)
 
 
 
