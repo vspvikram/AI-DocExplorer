@@ -200,3 +200,5 @@ backend/approaches/test.py
 .DS_Store
 backend/approaches/skprompt.txt
 README_copy.md
+infra/
+vars/
