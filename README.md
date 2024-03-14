@@ -1,6 +1,6 @@
 # AI-DocExplorer: AI-Enhanced Plug-and-Play RAG Document Explorer
 
-AI-DocExplorer is a flexible AI-powered chatbot framework designed to streamline the search, discovery and iteraction process within extensive document databases. By harnessing cutting-edge AI technologies, it offers a dynamic chat interface enabling users to delve into any subject matter with ease. The framework is uniquely crafted to understand queries contextually, drawing on a diverse range of insights gleaned from a comprehensive document corpus. We have demonstrated its adaptability using an example implementation on Quantum physics research document corpus.
+AI-DocExplorer is a flexible AI-powered chatbot framework designed to streamline the search, discovery and interaction process within extensive document databases. By harnessing cutting-edge AI technologies, it offers a dynamic chat interface enabling users to delve into any subject matter with ease. The framework is uniquely crafted to understand queries contextually, drawing on a diverse range of insights gleaned from a comprehensive document corpus. We have demonstrated its adaptability using an example implementation on Quantum physics research document corpus.
 
 
 ## Customizable and Service-Agnostic Architecture
@@ -173,5 +173,4 @@ This project is open-sourced under the [Apache-2.0 license](https://github.com/v
 ## Acknowledgements
 
 AI-DocExplorer is based on a foundational template provided by [Azure](https://github.com/Azure-Samples/azure-search-openai-demo/tree/vectors). We have adapted and expanded upon this template to develop a versatile framework that caters to a wide range of document exploration needs. Special thanks to the Azure team for providing the building blocks that have facilitated the development of AI-DocExplorer.
-
 
