@@ -20,11 +20,6 @@ from services.search_services import SearchServiceClass
 # Chat Limit 
 CHAT_LIMIT = 30 #vik
 
-# LLM_CLIENT 
-# LLM_EMBED_CLIENT 
-# SEARCH_CLIENT 
-# DOC_STORAGE_CLIENT 
-# CHAT_STORAGE_CLIENT
 
 # Vik: data cleaning before embedding generation
 def clean_text(text, sep_token = " \n "):
@@ -44,12 +39,7 @@ For tabular information return it as an html table. Do not return markdown forma
 Each source has a name followed by colon and the actual information and the sources are separated by two new line characters. Each fact you use in the response should be accompanied by a citation in square brackets, including the full name of the source with its extension, e.g., [source_name.extension]. Please refrain from combining sources and list each source separately using square brackets, e.g., [source1.pdf] [source2.txt] [source3 Document.pdf]. Just use the source full file name with its extension inside the square brackets, do not include additional text inside the square brackets.
 {follow_up_questions_prompt}
 """
-# {injected_prompt}
-# Sources:
-# {sources}
-# <|im_end|>
-# {chat_history}
-# """
+
     follow_up_questions_prompt_content = """Generate three very brief follow-up questions that the user would likely ask next about their quantum physics research. 
     Use double angle brackets to reference the questions, e.g. <<Are there exclusions for prescriptions?>>.
     Try not to repeat questions that have already been asked.
@@ -62,12 +52,7 @@ Each source has a name followed by colon and the actual information and the sour
     Do not include any additional words or special characters like "search query", only generate the optimized search query that can directly be used.
     If the question is not in English, translate the question to English before generating the search query.
     """
-# Chat History:
-# {chat_history}
-# Question:
-# {question}
-# Search query:
-# """
+
     chat_session_name_prompt = """"Using the chat history provided below between tripple backticks, generate a concise chat session name. Only generate the chat session name without using unnecessary words such as 'Chat name', special characters, and tags such as 'user' and 'assistant'. Generate a pure alpha-numeric [A-Za-z0-9 ] name without using any special characters except whitespace. The name should be long enough with at least 30 characters and short enough with no more than 50 characters in it. The chat history is as follows:
 Chat History: ```{chat_history}```
 Chat Session Name: 
@@ -77,21 +62,13 @@ Chat Session Name:
                  doc_storage_client: DocStorageService,
                  sourcepage_field: str, 
                  content_field: str):       
-    # def __init__(self, search_client: SearchClient, llm_client: LlmServiceClass,
-    #              chatgpt_deployment: str, 
-    #              gpt_deployment: str, embedding_deployment: str,
-    #              sourcepage_field: str, 
-    #              content_field: str, blob_container: ContainerClient):       
+          
         self.search_client = search_client
         self.llm_client = llm_client
         self.llm_embed_client = llm_embed_client
         self.doc_storage_client = doc_storage_client
-        # self.chatgpt_deployment = chatgpt_deployment
-        # self.gpt_deployment = gpt_deployment
-        # self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
-        # self.blob_container = blob_container #vik
 
 
     # vik: generate embeddings for the given text
@@ -109,11 +86,6 @@ Chat Session Name:
         embeddings = self.llm_embed_client.generate_embeddings(
             text = text
         )
-        # embeddings = openai.Embedding.create(
-        #     input = text,
-        #     engine = self.embedding_deployment
-        # )
-        # embeddings = embeddings['data'][0]['embedding']
         return embeddings
     
 
@@ -136,65 +108,18 @@ Chat Session Name:
         completion = self.llm_client.create(messages=messages)
         q = completion
 
-        # messages_opt_query = []
-        # messages_opt_query.append({'role': 'system',
-        #                            'content': self.query_prompt_template})
-        # messages_opt_query = self.get_chat_history_for_ChatCompletion(history=history, existing_list=messages_opt_query)
-
-        # completion = openai.ChatCompletion.create(
-        #     engine=self.chatgpt_deployment, 
-        #     messages=messages_opt_query, 
-        #     temperature=0.0, 
-        #     max_tokens=32, 
-        #     n=1, 
-        #     stop=["\n"])
-        # q = completion['choices'][0]['message']['content']
-
 
         # vik: function wrapper to get the search results for the given query
         def get_search_results(q):
             # STEP 2: Retrieve relevant documents from the search index with the LLM optimized query
             r = self.search_client.query_index(vector=self.get_embeddings(q),
                                                top_k=top)
-            # if overrides.get("semantic_ranker") and not overrides.get("vector_ranker"):
-            #     r = self.search_client.search(q, 
-            #                                 filter=filter,
-            #                                 query_type=QueryType.SEMANTIC,
-            #                                 query_language="en-us", 
-            #                                 query_speller="lexicon", 
-            #                                 semantic_configuration_name="default", 
-            #                                 top=top, 
-            #                                 query_caption="extractive|highlight-false" if use_semantic_captions else None)
-                
-            # elif overrides.get("semantic_ranker") and overrides.get("vector_ranker"):
-            #     r = self.search_client.search(q,
-            #                                 filter=filter,
-            #                                 vector=self.get_embeddings(q),
-            #                                 top_k=top,
-            #                                 vector_fields="contentVector",
-            #                                 query_type=QueryType.SEMANTIC,
-            #                                 query_language="en-us", 
-            #                                 query_speller="lexicon", 
-            #                                 semantic_configuration_name="default", 
-            #                                 top=top, 
-            #                                 query_caption="extractive|highlight-false" if use_semantic_captions else None)
-                
-            # elif not overrides.get("semantic_ranker") and overrides.get("vector_ranker"):
-            #     r = self.search_client.search(search_text=None,
-            #                                 filter=filter,
-            #                                 vector=self.get_embeddings(q),
-            #                                 top_k=top,
-            #                                 vector_fields="contentVector")
-                
-            # else:
-            #     r = self.search_client.search(q, filter=filter, top=top)
+            
 
             return r
         
         # vik: function to get the search results based on the preference to use just the chunks of the content or the entire content of the page
         def get_search_results_content(r, full_content=True):
-            # if use_semantic_captions:
-            #     results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
             if not full_content:
                 results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
             else:
@@ -225,26 +150,12 @@ Chat Session Name:
         def generate_response(content, results, follow_up_questions_prompt):
             # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
             prompt_override = overrides.get("prompt_template")
-            # if prompt_override is None:
-            #     prompt = self.prompt_prefix.format(injected_prompt="", sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
-            # elif prompt_override.startswith(">>>"):
-            #     prompt = self.prompt_prefix.format(injected_prompt=prompt_override[3:] + "\n", sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
-            # else:
-            #     prompt = prompt_override.format(sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
 
             if prompt_override is None:
                 prompt = self.prompt_prefix.format(follow_up_questions_prompt=follow_up_questions_prompt)
-            # elif prompt_override.startswith(">>>"):
-            #     prompt = self.prompt_prefix.format(injected_prompt=prompt_override[3:] + "\n", sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
+            
             else:
                 prompt = prompt_override.format(follow_up_questions_prompt=follow_up_questions_prompt)
-
-            # messages = []
-            # messages.append({'role': 'system',
-            #                         'content': prompt})
-            # messages.append({'role': 'system',
-            #                  'content': f"```Reference Documents: {content}```"})
-            # messages_new = self.get_chat_history_for_ChatCompletion(history=history, existing_list=messages)
 
             messages_new = self.llm_client.format_prompt(system_prompt=prompt,
                                                      supporting_documents=content,
@@ -252,15 +163,7 @@ Chat Session Name:
             completion = self.llm_client.create(messages=messages_new)
 
 
-            # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-            # completion = openai.ChatCompletion.create(
-            #     engine=self.chatgpt_deployment, 
-            #     messages=messages_new, 
-            #     temperature=overrides.get("temperature") or 0.5, 
-            #     max_tokens=1024, 
-            #     n=1, 
-            #     stop=["<|im_end|>", "<|im_start|>"])
-            
+            # STEP 3: Generate a contextual and content specific answer using the search results and chat history            
             prompt_txt = self.create_prompt_from_messages(messages=messages_new)
             
             return completion, prompt_txt
@@ -272,18 +175,7 @@ Chat Session Name:
 
             # vik: get the search results based on the preference to use just the chunks of the content or the entire content of the page
             content, results = get_search_results_content(r, full_content=False)
-            # results = [
-            #     "Mars_Exploration_History: Mars exploration has been an ongoing endeavor since the early 20th century, with missions ranging from flybys and orbiters to rovers and landers. Notable achievements include the Mariner 9 spacecraft becoming the first to orbit Mars in 1971, and the Curiosity rover making the first detection of organic molecules on the Martian surface in 2012. Future missions aim to further explore Mars' potential for habitability and search for signs of past or present life.",
-                
-            #     "James_Webb_Space_Telescope: The James Webb Space Telescope (JWST) is a powerful infrared telescope launched in December 2021. JWST is designed to observe the universe's earliest stars and galaxies, study the formation of stars and planetary systems, and investigate the atmospheres of exoplanets. Early observations have already revealed groundbreaking discoveries, including the faintest light ever detected from a galaxy and the presence of water vapor in the atmosphere of an exoplanet.",
-                
-            #     "Space_Colonization: Space colonization is the idea of establishing permanent human settlements beyond Earth. Potential destinations include the Moon, Mars, and other planets or moons in our solar system. Proponents of space colonization argue that it would offer humanity a way to escape environmental threats on Earth, access new resources, and expand our knowledge of the universe. However, space colonization faces significant challenges, including the high cost, technological hurdles, and potential health risks for humans living in space.",
-                
-            #     "Extraterrestrial_Life: The search for extraterrestrial life (ET) is one of the most fundamental questions in science. With the discovery of thousands of exoplanets in recent years, the possibility of finding life beyond Earth seems more likely than ever. Scientists are looking for signs of life in a variety of ways, including searching for planets with suitable conditions for life, analyzing the atmospheres of exoplanets, and looking for signals from intelligent civilizations.",
-                
-            #     "Space_Tourism: Space tourism is the emerging industry of sending people into space for recreational purposes. The first commercial space tourism flight took place in 2001, and several companies are currently developing spacecraft for suborbital and orbital flights. Space tourism is still in its early stages, but it has the potential to become a major industry in the coming years.",
-            # ]
-            # content = "\n\n".join(results)
+            
             # vik: get the prompt for the given search results and generate the answer
             completion, prompt = generate_response(content, results, follow_up_questions_prompt)
         # except InvalidRequestError:
@@ -306,15 +198,6 @@ Chat Session Name:
         # vik: get the chat session name for the given chat history and the latest question
         if chat_length in [1, 4, 7, 10, 14]:
             chat_session_name_prompt = self.chat_session_name_prompt.format(chat_history=self.get_chat_history_as_text(history, include_last_turn=True))
-            # chat_session_name_completion = openai.Completion.create(
-            #     engine=self.chatgpt_deployment, 
-            #     prompt=chat_session_name_prompt, 
-            #     temperature=0.0, 
-            #     max_tokens=32, 
-            #     n=1, 
-            #     stop=["<|im_end|>", "<|im_start|>"])
-            # chat_session_name = chat_session_name_completion.choices[0].text
-            # chat_session_name = chat_session_name.replace("\"", "")
 
             messages = [{'role': 'user', 'content': chat_session_name_prompt}]
             chat_session_name = self.llm_client.create(messages=messages)
@@ -332,11 +215,7 @@ Chat Session Name:
         for h in reversed(history if include_last_turn else history[:-1]):
             history_text = """user:""" +"\n" + h["user"] + "\n" + "\n" + """assistant:""" + "\n" + (h.get("bot") if h.get("bot") else "") + "\n" + history_text
             if len(history_text) > approx_max_tokens*4:
-                break    
-        # for h in reversed(history if include_last_turn else history[:-1]):
-        #     history_text = """<|im_start|>user""" +"\n" + h["user"] + "\n" + """<|im_end|>""" + "\n" + """<|im_start|>assistant""" + "\n" + (h.get("bot") + """<|im_end|>""" if h.get("bot") else "") + "\n" + history_text
-        #     if len(history_text) > approx_max_tokens*4:
-        #         break    
+                break      
         return history_text
     
     def get_chat_history_for_ChatCompletion(self, history, existing_list=None):
